@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sudoku - Number Puzzle</title>
+  <link rel="stylesheet" href="game.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="game-container sudoku" id="sudoku-game">
+    <h1>Sudoku</h1>
+    <p>Fill each row, column, and 3x3 box with digits 1-9.</p>
+    <div class="difficulty-controls" aria-label="Puzzle difficulty">
+      <button class="difficulty selected" data-difficulty="easy" type="button">Easy</button>
+      <button class="difficulty" data-difficulty="medium" type="button">Medium</button>
+      <button class="difficulty" data-difficulty="hard" type="button">Hard</button>
+    </div>
+    <div id="timer" class="timer" role="timer">00:00</div>
+    <div class="controls">
+      <button id="newGame" type="button">New game</button>
+      <button id="getHint" type="button">Get hint</button>
+    </div>
+    <div id="grid" class="grid" role="grid" aria-label="Sudoku grid"></div>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>

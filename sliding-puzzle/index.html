@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sliding Puzzle Game - Number Tile Puzzle - Level 1</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: system-ui, sans-serif;
+      background: #020409;
+      color: #e8f7ff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 22px 14px; }
+    main { width: min(100%, 440px); margin: 0 auto; text-align: center; }
+    h1 { margin: 0; color: #00f3ff; font-size: clamp(1.35rem, 5vw, 1.8rem); }
+    .subtitle { margin: 6px 0 16px; color: #a7bac9; font-size: .95rem; }
+    .level { display: inline-block; margin-bottom: 12px; padding: 5px 11px; border: 1px solid #00f3ff66; border-radius: 999px; color: #00f3ff; font-size: .75rem; letter-spacing: .12em; }
+    .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; width: min(100%, 330px); margin: 0 auto 16px; padding: 10px; border: 1px solid #00f3ff44; border-radius: 16px; background: #06101b; box-shadow: 0 0 26px #00f3ff15; }
+    .tile { display: grid; aspect-ratio: 1; place-items: center; padding: 0; border: 1px solid #00f3ff88; border-radius: 11px; background: linear-gradient(145deg, #0c3140, #071722); color: #ecfcff; font-size: clamp(1.8rem, 10vw, 2.7rem); font-weight: 800; cursor: pointer; touch-action: manipulation; transition: background .14s, transform .14s, border-color .14s; }
+    .tile:not(:disabled):hover { transform: translateY(-2px); border-color: #00f3ff; background: #104454; }
+    .tile:focus-visible, button:focus-visible { outline: 3px solid #ffd700; outline-offset: 2px; }
+    .tile:disabled { cursor: default; }
+    .tile.empty { border-color: #ffffff12; background: #03080e; }
+    .stats { margin: 4px 0 14px; color: #c0d3de; font-variant-numeric: tabular-nums; }
+    .stats strong { color: #ffd700; }
+    .controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .controls button { min-height: 42px; padding: 9px 16px; border: 1px solid #00f3ff77; border-radius: 9px; background: #06202a; color: #00f3ff; font: inherit; font-weight: 700; cursor: pointer; }
+    .controls button:hover { background: #0b3541; }
+    .status { min-height: 1.6em; margin: 12px 0 0; color: #a7bac9; font-size: .9rem; }
+    .status.success { color: #7dffba; font-weight: 700; }
+    @media (max-width: 360px) { body { padding: 16px 8px; } .board { gap: 6px; padding: 7px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="level">LEVEL 1 · 3 × 3</span>
+    <h1>Sliding Number Puzzle</h1>
+    <p class="subtitle">Slide the tiles into order. Tap a tile beside the empty space.</p>
+    <div id="board" class="board" role="group" aria-label="Sliding number puzzle board"></div>
+    <p class="stats">Moves: <strong id="moves">0</strong></p>
+    <div class="controls">
+      <button id="shuffle" type="button">New puzzle</button>
+      <button id="reset" type="button">Reset board</button>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite">Use the arrow keys or tap a neighboring tile.</p>
+  </main>
+  <script>
+    (() => {
+      const boardElement = document.getElementById("board");
+      const movesElement = document.getElementById("moves");
+      const statusElement = document.getElementById("status");
+      const goal = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+      let tiles = [...goal];
+      let initialTiles = [...goal];
+      let moves = 0;
+      let finished = false;
+
+      function isSolved() {
+        return tiles.every((tile, index) => tile === goal[index]);
+      }
+
+      function canMove(index) {
+        const empty = tiles.indexOf(0);
+        const row = Math.floor(index / 3);
+        const column = index % 3;
+        const emptyRow = Math.floor(empty / 3);
+        const emptyColumn = empty % 3;
+        return Math.abs(row - emptyRow) + Math.abs(column - emptyColumn) === 1;
+      }
+
+      function render() {
+        boardElement.replaceChildren();
+        tiles.forEach((number, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = number ? "tile" : "tile empty";
+          button.textContent = number ? String(number) : "";
+          button.disabled = finished || !number || !canMove(index);
+          button.setAttribute("aria-label", number ? `Move tile ${number}` : "Empty space");
+          button.addEventListener("click", () => moveTile(index));
+          boardElement.appendChild(button);
+        });
+        movesElement.textContent = String(moves);
+      }
+
+      function moveTile(index) {
+        if (finished || !canMove(index)) return;
+        const empty = tiles.indexOf(0);
+        [tiles[index], tiles[empty]] = [tiles[empty], tiles[index]];
+        moves++;
+        if (isSolved()) {
+          finished = true;
+          statusElement.textContent = `Puzzle solved in ${moves} ${moves === 1 ? "move" : "moves"}!`;
+          statusElement.className = "status success";
+          render();
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: "traitor-hunt:sliding-puzzle-solved" }, "*");
+          }
+          return;
+        }
+        statusElement.textContent = "Keep going — arrange the numbers from 1 to 8.";
+        render();
+      }
+
+      function shuffle() {
+        tiles = [...goal];
+        let previousEmpty = -1;
+        for (let step = 0; step < 80; step++) {
+          const empty = tiles.indexOf(0);
+          const row = Math.floor(empty / 3);
+          const column = empty % 3;
+          const neighbors = [
+            row > 0 ? empty - 3 : -1,
+            row < 2 ? empty + 3 : -1,
+            column > 0 ? empty - 1 : -1,
+            column < 2 ? empty + 1 : -1
+          ].filter((index) => index >= 0 && index !== previousEmpty);
+          const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+          [tiles[empty], tiles[next]] = [tiles[next], tiles[empty]];
+          previousEmpty = empty;
+        }
+        if (isSolved()) return shuffle();
+        initialTiles = [...tiles];
+        moves = 0;
+        finished = false;
+        statusElement.textContent = "Use the arrow keys or tap a neighboring tile.";
+        statusElement.className = "status";
+        render();
+      }
+
+      function reset() {
+        tiles = [...initialTiles];
+        moves = 0;
+        finished = false;
+        statusElement.textContent = "Board reset. Keep arranging the numbers.";
+        statusElement.className = "status";
+        render();
+      }
+
+      document.getElementById("shuffle").addEventListener("click", shuffle);
+      document.getElementById("reset").addEventListener("click", reset);
+      document.addEventListener("keydown", (event) => {
+        const empty = tiles.indexOf(0);
+        const row = Math.floor(empty / 3);
+        const column = empty % 3;
+        const index = {
+          ArrowUp: row < 2 ? empty + 3 : -1,
+          ArrowDown: row > 0 ? empty - 3 : -1,
+          ArrowLeft: column < 2 ? empty + 1 : -1,
+          ArrowRight: column > 0 ? empty - 1 : -1
+        }[event.key];
+        if (index >= 0) {
+          event.preventDefault();
+          moveTile(index);
+        }
+      });
+
+      shuffle();
+    })();
+  </script>
+</body>
+</html>

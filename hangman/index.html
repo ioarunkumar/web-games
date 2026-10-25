@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hangman - Word Guessing Puzzle</title>
+  <link rel="stylesheet" href="game.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="game-container" id="hangman-game">
+    <h1>Hangman</h1>
+    <p>Guess the hidden word before the figure is complete.</p>
+    <svg class="hangman-svg" viewBox="0 0 200 250" role="img" aria-label="Hangman drawing">
+      <line x1="20" y1="230" x2="100" y2="230"></line>
+      <line x1="60" y1="230" x2="60" y2="20"></line>
+      <line x1="60" y1="20" x2="140" y2="20"></line>
+      <line x1="140" y1="20" x2="140" y2="50"></line>
+      <circle id="head" cx="140" cy="70" r="20"></circle>
+      <line id="body" x1="140" y1="90" x2="140" y2="150"></line>
+      <line id="leftArm" x1="140" y1="110" x2="110" y2="140"></line>
+      <line id="rightArm" x1="140" y1="110" x2="170" y2="140"></line>
+      <line id="leftLeg" x1="140" y1="150" x2="110" y2="190"></line>
+      <line id="rightLeg" x1="140" y1="150" x2="170" y2="190"></line>
+    </svg>
+    <p id="hint" class="hint">Category:</p>
+    <div id="wordDisplay" class="word-display" aria-label="Hidden word"></div>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+    <div id="keyboard" aria-label="Letter choices"></div>
+    <div class="stats"><span>Wrong guesses: <b id="wrongCount">0</b> / 6</span><span>Wins: <b id="wins">0</b></span><span>Losses: <b id="losses">0</b></span></div>
+    <button id="newGame" type="button">New game</button>
+  </main>
+</body>
+</html>

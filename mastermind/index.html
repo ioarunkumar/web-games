@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mastermind - Code Breaking Puzzle</title>
+  <link rel="stylesheet" href="game.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="game-container" id="mastermind-game">
+    <h1>Mastermind</h1>
+    <p>Crack the four-color code in five guesses. Colors may repeat.</p>
+    <div id="secretCode" class="secret-code" aria-label="Hidden code"></div>
+    <div class="legend" aria-label="Feedback key">
+      <span><i class="legend-pin black"></i> Right color and position</span>
+      <span><i class="legend-pin white"></i> Right color, wrong position</span>
+    </div>
+    <div id="board" aria-label="Guess board"></div>
+    <div id="colorPalette" class="color-palette" aria-label="Choose a color"></div>
+    <div class="controls">
+      <button id="submitGuess" class="primary" type="button">Submit guess</button>
+      <button id="undoColor" type="button">Undo</button>
+      <button id="clearGuess" type="button">Clear</button>
+      <button id="newGame" type="button">New game</button>
+    </div>
+    <div class="stats"><span>Guesses: <b id="guessCount">0 / 5</b></span></div>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>

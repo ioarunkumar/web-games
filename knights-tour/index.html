@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Knight's Tour Puzzle</title>
+  <link rel="stylesheet" href="game.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <main class="game-container" id="knights-tour-game">
+    <h1>Knight's Tour</h1>
+    <p>Visit every square once using legal knight moves.</p>
+    <div id="timer" class="timer" role="timer">Time: 0s</div>
+    <div id="board" class="board" aria-label="Chessboard"></div>
+    <div class="controls">
+      <button id="resetGame" type="button">New game</button>
+      <button id="showHint" type="button">Show hint</button>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <section class="scores" aria-labelledby="scoreTitle">
+      <h2 id="scoreTitle">Best five times</h2>
+      <ol id="bestScores"></ol>
+    </section>
+  </main>
+</body>
+</html>
